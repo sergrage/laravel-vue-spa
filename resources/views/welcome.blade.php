@@ -15,13 +15,9 @@
 
     </head>
     <body>
-        <div class="container">
-            <div id="app">
-                <post-index>
-
-                </post-index>
-            </div>
-        </div>
+    <div id="app">
+        <app></app>
+    </div>
 
     </body>
     <script src="{{mix('js/app.js')}}"></script>

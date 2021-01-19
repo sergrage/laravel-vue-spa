@@ -1,32 +1,87 @@
 <template>
-    <table class="table table-border">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Post test</th>
-            <th>Create date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>one</td>
-            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. At autem consequuntur distinctio eligendi expedita facere neque nesciunt odio, officia possimus quibusdam quis repudiandae sint, sit tenetur vel velit vitae voluptatum?</td>
-            <td>2020-01-23</td>
-        </tr>
-        <tr>
-            <td>two</td>
-            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. At autem consequuntur distinctio eligendi expedita facere neque nesciunt odio, officia possimus quibusdam quis repudiandae sint, sit tenetur vel velit vitae voluptatum?</td>
-            <td>2020-01-23</td>
-        </tr>
-        <tr>
-            <td>three</td>
-            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. At autem consequuntur distinctio eligendi expedita facere neque nesciunt odio, officia possimus quibusdam quis repudiandae sint, sit tenetur vel velit vitae voluptatum?</td>
-            <td>2020-01-23</td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="">
+        <select v-model="category_id" class="form-control m-md-2">
+            <option value="">-- Choose Category</option>
+            <option v-for="category in categories" :value="category.id">
+                {{category.name}}
+            </option>
+        </select>
+        <table class="table table-border">
+            <thead>
+            <tr>
+                <th>
+                    <a href="#" @click.prevent="change_sort('title')">Title</a>
+                    <span v-if="this.sort_field === 'title' && this.sort_direction ==='asc'">&uarr;</span>
+                    <span v-if="this.sort_field === 'title' && this.sort_direction ==='desc'">&darr;</span>
+                </th>
+                <th>
+                    <a href="#" @click.prevent="change_sort('text')">Post text</a>
+                    <span v-if="this.sort_field === 'text' && this.sort_direction ==='asc'">&uarr;</span>
+                    <span v-if="this.sort_field === 'text' && this.sort_direction ==='desc'">&darr;</span>
+                </th>
+                <th>
+                    <a href="#" @click.prevent="change_sort('created_at')">Create date</a>
+                    <span v-if="this.sort_field === 'created_at' && this.sort_direction ==='asc'">&uarr;</span>
+                    <span v-if="this.sort_field === 'created_at' && this.sort_direction ==='desc'">&darr;</span>
+                </th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="post in posts.data">
+                <td>{{post.title}}</td>
+                <td>{{post.text}}</td>
+                <td>{{post.created_at}}</td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+        <pagination :data="posts" @pagination-change-page="getResults"></pagination>
+    </div>
+
 </template>
 
 <script>
-
+    export default {
+        data() {
+            return {
+                posts: {},
+                categories: {},
+                category_id: '',
+                sort_field: 'created_at',
+                sort_direction: 'desc'
+            }
+        },
+        mounted(){
+            this.getResults();
+            axios.get('/api/categories')
+                .then(response => {
+                    this.categories = response.data.data;
+                });
+        },
+        watch: {
+          category_id(value) {this.getResults();}
+        },
+        methods: {
+            change_sort(field){
+                if(this.sort_field === field) {
+                    this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc' ;
+                } else {
+                    this.sort_field = field;
+                    this.sort_direction = 'asc';
+                }
+                this.getResults();
+            },
+            // Our method to GET results from a Laravel endpoint
+            getResults(page = 1) {
+                axios.get('/api/posts?page=' + page
+                    +'&category_id=' + this.category_id
+                    +'&sort_field=' + this.sort_field
+                    +'&sort_direction=' + this.sort_direction)
+                    .then(response => {
+                        this.posts = response.data;
+                    });
+            }
+        }
+    }
 </script>
