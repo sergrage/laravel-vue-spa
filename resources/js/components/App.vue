@@ -9,10 +9,14 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <router-link to="/" class="nav-link">Posts List</router-link>
+                            <router-link exact active-class="active-menu"
+                                         :to="{name: 'posts.index'}"
+                                         class="nav-link">Posts List</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/create" class="nav-link">Add new Post</router-link>
+                            <router-link exact active-class="active-menu"
+                                         :to="{name: 'posts.create'}"
+                                         class="nav-link">Add new Post</router-link>
                         </li>
                     </ul>
                 </div>

@@ -12,7 +12,15 @@
         <!-- Styles -->
         <link rel="stylesheet" href="{{mix('css/app.css')}}">
 
-
+        <style>
+            .active-menu {
+                font-weight: bold;
+                text-decoration: underline;
+            }
+            /*.router-link-active {*/
+            /*    font-weight: bold;*/
+            /*}*/
+        </style>
     </head>
     <body>
     <div id="app">

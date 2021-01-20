@@ -51,8 +51,13 @@
             }
         },
         mounted() {
-            axios.get('api/categories').then(response => {
+            axios.get('/api/categories').then(response => {
                 this.categories = response.data.data
+            });
+
+            axios.get('/api/posts/' + this.$route.params.id ).then(response => {
+                this.fields = response.data.data
+                console.log(response.data.data)
             });
         },
         methods: {
@@ -62,16 +67,16 @@
             submit_form() {
                 this.form_submit = true;
 
-                let fields = new FormData();
-                for(let key in this.fields) {
-                    fields.append(key, this.fields[key]);
-                }
-
-                axios.post('api/posts', fields).then(response => {
+                axios.put('/api/posts/' + this.$route.params.id, this.fields).then(response => {
+                    this.$swal('Post updated successfully');
                     this.$router.push('/');
                     this.form_submit = false;
                 }).catch(error => {
                     if(error.response.status === 422) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error happened'
+                        });
                         this.errors = error.response.data.errors;
                     }
                     this.form_submit = false;
